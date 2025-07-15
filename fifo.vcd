@@ -25,6 +25,14 @@ module Synchronous_FIFO #(
             count <= 0;
             d_out <= 0;
         end else begin
+            if (w_enb && !full && r_enb && !empty) begin
+                // Simultaneous read and write: count stays the same
+                fifo[w_ptr] <= d_in;
+                w_ptr <= (w_ptr + 1) % DEPTH;
+                d_out <= fifo[r_ptr];
+                r_ptr <= (r_ptr + 1) % DEPTH;
+                // count unchanged
+            end
             // Write operation
             if (w_enb && !full) begin
                 fifo[w_ptr] <= d_in;
